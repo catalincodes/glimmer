@@ -15,7 +15,14 @@
               outputDiv.textContent = '';
 
               try {
-                  const response = await fetch('http://localhost:5275/stream');
+                  const response = await fetch('http://localhost:5275/chat', {
+                    method: 'POST',
+                    headers: {
+                       'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ Message: "Hello Glimmer The Lazy Frog Jumped Over the Brown Fence" })
+                  });
+
                   const reader = response.body.getReader();
                   const decoder = new TextDecoder();
 
