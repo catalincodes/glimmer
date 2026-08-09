@@ -8,6 +8,11 @@ app.UseStaticFiles();
 
 app.MapGet("/stream", (CancellationToken cancellationToken) => StreamWords(cancellationToken));
 
+app.MapPost("/chat", (ChatRequest request) =>
+        {
+            return Results.Ok(new { echoed = request.Message });
+        });
+
 static async IAsyncEnumerable<string> StreamWords([EnumeratorCancellation]CancellationToken cancellationToken)
 {
     var words = new[] { "Hello", " from", " Glimmer's", " asynchronous", " streaming", " backend!" };
@@ -19,4 +24,7 @@ static async IAsyncEnumerable<string> StreamWords([EnumeratorCancellation]Cancel
     }
 }
 
+
 app.Run();
+
+record ChatRequest(string Message);
