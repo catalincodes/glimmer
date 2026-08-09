@@ -6,17 +6,38 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/stream", (CancellationToken cancellationToken) => StreamWords(cancellationToken));
+app.MapGet("/stream", (CancellationToken cancellationToken) => StreamWords(null, cancellationToken));
 
-static async IAsyncEnumerable<string> StreamWords([EnumeratorCancellation]CancellationToken cancellationToken)
+app.MapPost("/chat", async (ChatRequest request, HttpContext context, CancellationToken token) =>
 {
-    var words = new[] { "Hello", " from", " Glimmer's", " asynchronous", " streaming", " backend!" };
+    context.Response.ContentType = "text/plain; charset=utf-8";
 
-    foreach (var word in words)
+    string[] words = request.Message.Split(' ');
+    var wordsList = words.ToList();
+
+    for (int i = 0; i < wordsList.Count; i++)
     {
+        var wordToStream = i < wordsList.Count - 1 ? wordsList[i] + " " : wordsList[i];
+ 
+        await Task.Delay(200, token);
+        await context.Response.WriteAsync(wordToStream, token);
+        await context.Response.Body.FlushAsync(token);
+    }
+});
+
+static async IAsyncEnumerable<string> StreamWords(IEnumerable<string>? wordsToStream, [EnumeratorCancellation]CancellationToken cancellationToken)
+{
+    var words = wordsToStream ?? [ "Hello", "from", "Glimmer's", "asynchronous", "streaming", "backend!" ];
+
+    var wordsList = words.ToList();
+    for (int i = 0; i < wordsList.Count; i++)
+    {
+        var wordToStream = i < wordsList.Count - 1 ? wordsList[i] + " " : wordsList[i];
         await Task.Delay(200, cancellationToken);
-        yield return word;
+        yield return wordToStream;
     }
 }
 
 app.Run();
+
+record ChatRequest(string Message);
