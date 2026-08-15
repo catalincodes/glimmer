@@ -5,12 +5,15 @@
       <title>Glimmer - Stream Test</title>
   </head>
   <body>
-      <h1>Glimmer Stream Test</h1>
-      <button id="startBtn">Start Stream</button>
+      <h1>Glimmer</h1>
+      <div>
+          <textarea id="messageInput" placeholder="Tell me what do you need ..." rows="4" cols="50"></textarea>
+          <button id="sendBtn">Send</button>
+      </div>
       <div id="output" style="margin-top: 20px; font-family: monospace; white-space: pre-wrap;"></div>
 
       <script>
-          document.getElementById('startBtn').addEventListener('click', async () => {
+          document.getElementById('sendBtn').addEventListener('click', async () => {
               const outputDiv = document.getElementById('output');
               outputDiv.textContent = '';
 
@@ -20,7 +23,7 @@
                     headers: {
                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ Message: "Hello Glimmer The Lazy Frog Jumped Over the Brown Fence" })
+                    body: JSON.stringify({ Message: document.getElementById('messageInput').value })
                   });
 
                   const reader = response.body.getReader();
