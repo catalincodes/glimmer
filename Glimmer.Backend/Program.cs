@@ -94,7 +94,6 @@ static async IAsyncEnumerable<string> StreamWords(IEnumerable<string>? wordsToSt
     }
 }
 
-
 app.Run();
 
 record ChatRequest(string Message);
